@@ -22,9 +22,10 @@ int main () {
 	printString(buffer);
 	printString("\r\n\0");
 	makeInterrupt21();
-	interrupt(0x21,0,0,0,0);
-//	interrupt (0x21,1,line,0,0);
-//	interrupt (0x21,0,line,0,0);
+	interrupt (0x21,1,line,0,0);
+	printString("\r\n\0");
+	interrupt (0x21,0,line,0,0);
+	printString("\r\n\0");
 
 	while (1) {
 //	  todo
@@ -32,6 +33,7 @@ int main () {
 	return 0;
 }
 
+// It prints the string
 void printString(char* word) {
 	int x=0;
 	char c = word[x];
@@ -42,6 +44,7 @@ void printString(char* word) {
 	}
 }
 
+// It reads the string
 void readString(char* word) {
 	int x=0;
 	char c = interrupt(0x16, 0, 0, 0, 0);
@@ -61,6 +64,7 @@ void readString(char* word) {
 	word[x+1] = 0x0;
 }
 
+// It will read sector from floppya
 void readSector(char* buffer, int sector) {
 	int CH = sector/36;
 	int CL = mod (sector, 18);
@@ -68,12 +72,14 @@ void readSector(char* buffer, int sector) {
 	interrupt(0x13, 2 * 256 + 1, buffer, CH * 256 + CL + 1, DH * 256 + 0);
 }
 
+// defines interrupt21 
 void handleInterrupt21 (int ax, int bx, int cx, int dx) {
-	printString("Hello World...again.");
-/*	if (ax == 0) {
+	printString("Hello World...again.\r\n\0");
+	if (ax == 0) {
 		printString (bx);
 	}
 	else if (ax == 1) {
+		printString("Enter a line:  \0");
 		readString (bx);
 	}
 	else if (ax == 2) {
@@ -82,8 +88,9 @@ void handleInterrupt21 (int ax, int bx, int cx, int dx) {
 	else {
 		printString ("You entered an improper value. System fail.");
 	}
-*/}
+}
 
+// It is a function that calculates the remainder or mod
 int mod (int a, int b) {
 	while (a >= b) {
 		a = a-b;
